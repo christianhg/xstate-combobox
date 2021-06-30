@@ -39,6 +39,7 @@ export type ComboboxEvent<TComboboxItem> =
   | { type: 'MOUSE_LEAVE_ITEM' }
   | { type: 'MOUSE_ENTER_FOOTER' }
   | { type: 'MOUSE_LEAVE_FOOTER' }
+  | { type: 'CLICK' }
   | { type: 'ENTER' }
   | { type: 'QUERY_CHANGED'; query: string }
   | { type: 'ITEM_SELECTED'; item: TComboboxItem }
@@ -75,6 +76,9 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
       actions: [send({ type: 'DOWN' }, { to: 'list' })],
     },
     ENTER: {
+      actions: [send({ type: 'SELECT' }, { to: 'list' })],
+    },
+    CLICK: {
       actions: [send({ type: 'SELECT' }, { to: 'list' })],
     },
     MOUSE_ENTER_ITEM: {
