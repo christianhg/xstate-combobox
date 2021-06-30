@@ -39,8 +39,9 @@ function App() {
         itemToString={(item) => item.label}
         onFooterSelected={() => {
           // Redirect to another page
-          console.log('footer selected')
+          console.log('footer selected');
         }}
+        placeholder={'Find your favourite fruit'}
         search={searchFruit}
       />
     </div>

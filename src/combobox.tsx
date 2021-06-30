@@ -12,6 +12,7 @@ type Props<TItem extends ComboboxItem> = {
   items: TItem[];
   itemToString: (item: TItem) => string;
   onFooterSelected: () => void;
+  placeholder: string;
   search: ComboboxSearch<TItem>;
 };
 
@@ -21,6 +22,7 @@ export const Combobox = <TItem extends ComboboxItem>({
   items,
   itemToString,
   onFooterSelected,
+  placeholder,
   search,
 }: Props<TItem>) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -46,6 +48,7 @@ export const Combobox = <TItem extends ComboboxItem>({
         type="text"
         {...getInputProps()}
         value={selection !== undefined ? itemToString(selection) : query}
+        placeholder={placeholder}
       />
       {isOpen ? (
         <ul>
