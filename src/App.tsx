@@ -34,8 +34,9 @@ function App() {
     <div className="App">
       <Combobox
         items={fruit}
-        search={searchFruit}
         itemToString={(item) => item.label}
+        comparator={(a, b) => a.id === b.id}
+        search={searchFruit}
       />
     </div>
   );

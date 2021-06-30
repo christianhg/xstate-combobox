@@ -11,6 +11,11 @@ export type ComboboxSearch<TComboboxItem extends ComboboxItem> = (
   query: string
 ) => TComboboxItem[];
 
+export type ComboboxItemComparator<TComboboxItem extends ComboboxItem> = (
+  a: TComboboxItem,
+  b: TComboboxItem
+) => boolean;
+
 export type ComboboxContext<TComboboxItem> = {
   items: TComboboxItem[];
   query: string;
@@ -42,11 +47,13 @@ export type ComboboxEvent<TComboboxItem> =
 export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
   items,
   search,
+  comparator,
 }: {
   items: TComboboxItem[];
   search: ComboboxSearch<TComboboxItem>;
+  comparator: ComboboxItemComparator<TComboboxItem>;
 }) {
-  const listMachine = createListMachine<TComboboxItem>()
+  const listMachine = createListMachine<TComboboxItem>();
 
   return createMachine<
     ComboboxContext<TComboboxItem>,
@@ -69,6 +76,7 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
           },
         },
         focused: {
+          exit: ['clearPointer'],
           on: {
             BLUR: { target: 'blurred' },
             QUERY_CHANGED: {
@@ -106,7 +114,7 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
               },
             },
             select: {
-              tags: ['showAll'],
+              tags: ['open', 'showAll'],
               invoke: {
                 id: 'list',
                 src: listMachine,
@@ -115,11 +123,7 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
                     context.items,
                   pointer: (context: ComboboxContext<TComboboxItem>) =>
                     context.selection
-                      ? findIndex(
-                          context.items,
-                          context.selection,
-                          (a, b) => a === b
-                        )
+                      ? findIndex(context.items, context.selection, comparator)
                       : undefined,
                 },
               },
@@ -157,9 +161,11 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
                 },
               ],
             },
-            noResults: {},
+            noResults: {
+              tags: ['open'],
+            },
             hasResults: {
-              tags: ['showResults'],
+              tags: ['open', 'showResults'],
               invoke: {
                 id: 'list',
                 src: listMachine,

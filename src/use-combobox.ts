@@ -1,7 +1,13 @@
 import { useMachine } from '@xstate/react';
 import * as React from 'react';
 import { StateValue } from 'xstate';
-import { ComboboxContext, ComboboxItem, ComboboxSearch, createComboboxMachine } from './combobox-machine';
+import {
+  ComboboxContext,
+  ComboboxItem,
+  ComboboxItemComparator,
+  ComboboxSearch,
+  createComboboxMachine,
+} from './combobox-machine';
 
 type ComboboxReturnType<TItem> = {
   debug: {
@@ -30,13 +36,15 @@ export function useCombobox<TItem extends ComboboxItem>({
   inputRef,
   items,
   search,
+  comparator,
 }: {
   inputRef: React.RefObject<HTMLInputElement>;
   items: TItem[];
   search: ComboboxSearch<TItem>;
+  comparator: ComboboxItemComparator<TItem>;
 }): ComboboxReturnType<TItem> {
   const [current, send] = useMachine(() =>
-    createComboboxMachine({ items, search })
+    createComboboxMachine({ items, search, comparator })
   );
 
   React.useEffect(() => {
@@ -96,7 +104,7 @@ export function useCombobox<TItem extends ComboboxItem>({
       'data-highlighted':
         current.context.pointer.placement === 'footer' ? '' : undefined,
     }),
-    isOpen: true,
+    isOpen: current.tags.has('open'),
     list: current.tags.has('showAll')
       ? current.context.items
       : current.tags.has('showResults')
