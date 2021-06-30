@@ -4,15 +4,15 @@ type ListContext<TItem> = {
   items: TItem[];
   pointer?: number;
 };
-type ListEvent =
-  | { type: 'UP' }
-  | { type: 'DOWN' }
+export type ListKeyboardEvent = { type: 'UP' } | { type: 'DOWN' };
+export type ListMouseEvent =
   | { type: 'MOUSE_ENTER_ITEM'; index: number }
-  | { type: 'MOUSE_LEAVE_ITEM'; }
-  | { type: 'MOUSE_ENTER_FOOTER'}
-  | { type: 'MOUSE_LEAVE_FOOTER'}
-  | { type: 'OPEN' }
-  | { type: 'SELECT' };
+  | { type: 'MOUSE_LEAVE_ITEM' }
+  | { type: 'MOUSE_ENTER_FOOTER' }
+  | { type: 'MOUSE_LEAVE_FOOTER' };
+export type ListMetaEvent = { type: 'OPEN' } | { type: 'SELECT' };
+
+type ListEvent = ListKeyboardEvent | ListMouseEvent | ListMetaEvent;
 
 export function createListMachine<TItem>() {
   return createMachine<ListContext<TItem>, ListEvent>(
@@ -40,12 +40,12 @@ export function createListMachine<TItem>() {
               target: 'opened.idle',
             },
             MOUSE_ENTER_FOOTER: {
-              target: 'opened.focusingFooter'
+              target: 'opened.focusingFooter',
             },
             MOUSE_LEAVE_FOOTER: {
               actions: ['clearPointer'],
-              target: 'opened.idle'
-            }
+              target: 'opened.idle',
+            },
           },
           initial: 'idle',
           states: {

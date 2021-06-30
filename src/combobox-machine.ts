@@ -1,5 +1,9 @@
 import { assign, createMachine, send, TransitionsConfig } from 'xstate';
-import { createListMachine } from './list-machine';
+import {
+  createListMachine,
+  ListKeyboardEvent,
+  ListMouseEvent,
+} from './list-machine';
 
 export type ComboboxItem = {
   id: string;
@@ -30,15 +34,8 @@ export type ComboboxContext<TComboboxItem> = {
 export type ComboboxEvent<TComboboxItem> =
   | { type: 'FOCUS' }
   | { type: 'BLUR' }
-  | { type: 'UP' }
-  | { type: 'DOWN' }
-  | {
-      type: 'MOUSE_ENTER_ITEM';
-      index: number;
-    }
-  | { type: 'MOUSE_LEAVE_ITEM' }
-  | { type: 'MOUSE_ENTER_FOOTER' }
-  | { type: 'MOUSE_LEAVE_FOOTER' }
+  | ListKeyboardEvent
+  | ListMouseEvent
   | { type: 'CLICK' }
   | { type: 'ENTER' }
   | { type: 'QUERY_CHANGED'; query: string }
