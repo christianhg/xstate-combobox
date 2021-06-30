@@ -1,0 +1,110 @@
+import { useMachine } from '@xstate/react';
+import * as React from 'react';
+import { StateValue } from 'xstate';
+import { ComboboxContext, createComboboxMachine } from './combobox-machine';
+
+type Item = string;
+
+type ComboboxReturnType = {
+  debug: {
+    state: StateValue;
+    context: ComboboxContext;
+  };
+  getInputProps: () => {
+    onFocus: React.FocusEventHandler<HTMLInputElement>;
+    onBlur: React.FocusEventHandler<HTMLInputElement>;
+    onChange: React.ChangeEventHandler<HTMLInputElement>;
+    ref: React.RefObject<HTMLInputElement>;
+  };
+  getItemProps: (index: number) => {
+    'data-highlighted': string | undefined;
+  };
+  getFooterProps: () => {
+    'data-highlighted': string | undefined;
+  };
+  isOpen: boolean;
+  list: Item[];
+  query: string;
+  selection?: Item;
+};
+
+export function useCombobox({
+  inputRef,
+  items,
+  search,
+}: {
+  inputRef: React.RefObject<HTMLInputElement>;
+  items: Item[];
+  search: (items: Item[], query: string) => Item[];
+}): ComboboxReturnType {
+  const [current, send] = useMachine(() =>
+    createComboboxMachine({ items, search })
+  );
+
+  React.useEffect(() => {
+    const inputField = inputRef.current;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault(); // Prevent caret movement in the input field
+        send('DOWN');
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault(); // Prevent caret movement in the input fields
+        send('UP');
+      }
+      if (e.key === 'Enter') {
+        send('ENTER');
+      }
+    };
+
+    inputField?.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      inputField?.removeEventListener('keydown', onKeyDown);
+    };
+  }, [send, inputRef]);
+
+  console.log(current);
+
+  return {
+    debug: {
+      context: current.context,
+      state: current.value,
+    },
+    getInputProps: () => ({
+      onFocus: () => {
+        send('FOCUS');
+      },
+      onBlur: () => {
+        send('BLUR');
+      },
+      onChange: (e) => {
+        send({
+          type: 'QUERY_CHANGED',
+          query: e.currentTarget.value,
+        });
+      },
+      ref: inputRef,
+    }),
+    getItemProps: (index: number) => ({
+      'data-highlighted':
+        current.context.pointer.placement === 'list' &&
+        current.context.pointer.index === index
+          ? ''
+          : undefined,
+    }),
+    getFooterProps: () => ({
+      'data-highlighted':
+        current.context.pointer.placement === 'footer' ? '' : undefined,
+    }),
+    isOpen: true,
+    list: current.tags.has('showAll')
+      ? current.context.items
+      : current.tags.has('showResults')
+      ? current.context.results
+      : [],
+    query: current.context.query,
+    selection: current.context.selection,
+  };
+}

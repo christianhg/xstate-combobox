@@ -1,11 +1,11 @@
 import React from 'react';
-import { Search } from './search';
+import { Combobox } from './combobox';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <Search />
+      <Combobox />
     </div>
   );
 }
