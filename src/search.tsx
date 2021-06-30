@@ -35,6 +35,7 @@ export const Search = () => {
     isOpen,
     selection,
     list,
+    query,
   } = useCombobox({
     inputRef,
     items,
@@ -43,22 +44,24 @@ export const Search = () => {
 
   return (
     <>
-      <input type="text" {...getInputProps()} />
+      <input type="text" {...getInputProps()} value={selection ?? query} />
       <pre>Selection: {selection}</pre>
       <pre>{JSON.stringify(debug.state)}</pre>
       <pre>{JSON.stringify(debug.context.items)}</pre>
       <pre>{JSON.stringify(debug.context.query)}</pre>
       <pre>{JSON.stringify(debug.context.results)}</pre>
-      {isOpen ? <div className="combobox-list">
-        <ul>
-          {list.map((item, index) => (
-            <li {...getItemProps(index)} key={index}>
-              {item}
-            </li>
-          ))}
-        </ul>
-        <p {...getFooterProps()}>Can't find your journal?</p>
-      </div> : undefined}
+      {isOpen ? (
+        <div className="combobox-list">
+          <ul>
+            {list.map((item, index) => (
+              <li {...getItemProps(index)} key={index}>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p {...getFooterProps()}>Can't find your journal?</p>
+        </div>
+      ) : undefined}
     </>
   );
 };
@@ -82,6 +85,7 @@ type ComboboxReturnType = {
   };
   isOpen: boolean;
   list: Item[];
+  query: string;
   selection?: Item;
 };
 
@@ -155,12 +159,13 @@ function useCombobox({
       'data-highlighted':
         current.context.pointer.placement === 'footer' ? '' : undefined,
     }),
-    isOpen: false,
+    isOpen: true,
     list: current.tags.has('showAll')
       ? current.context.items
       : current.tags.has('showResults')
       ? current.context.results
       : [],
+    query: current.context.query,
     selection: current.context.selection,
   };
 }
@@ -237,6 +242,9 @@ function createComboboxMachine({
               console.log('opened', context);
             },
           ],
+          on: {
+            CLOSE: { target: 'closed' },
+          },
           initial: 'idle',
           states: {
             idle: {
@@ -352,7 +360,7 @@ function createComboboxMachine({
   return createMachine<SearchContext, SearchEvent>(
     {
       id: 'search',
-      initial: 'idle',
+      initial: 'blurred',
       context: {
         items,
         query: '',
@@ -361,21 +369,21 @@ function createComboboxMachine({
         pointer: { placement: 'none' },
       },
       states: {
-        idle: {
+        blurred: {
           on: {
             FOCUS: { target: 'focused' },
           },
         },
         focused: {
           on: {
-            BLUR: { target: 'idle' },
+            BLUR: { target: 'blurred' },
             QUERY_CHANGED: {
               target: '.searching',
               actions: ['performSearch'],
             },
             ITEM_SELECTED: {
               actions: ['setSelection'],
-              target: '.',
+              target: '.idle',
             },
             POINTER_MOVED: {
               actions: ['setPointer'],
@@ -386,9 +394,24 @@ function createComboboxMachine({
               },
             },
           },
-          initial: 'idle',
+          initial: 'select',
           states: {
             idle: {
+              entry: [
+                () => {
+                  console.log('idle search');
+                },
+              ],
+              on: {
+                UP: {
+                  target: 'select',
+                },
+                DOWN: {
+                  target: 'select',
+                },
+              },
+            },
+            select: {
               tags: ['showAll'],
               invoke: {
                 id: 'list',
@@ -405,7 +428,12 @@ function createComboboxMachine({
                       : undefined,
                 },
               },
-              entry: [send({ type: 'OPEN' }, { to: 'list' })],
+              entry: [
+                () => {
+                  console.log('select mode');
+                },
+                send({ type: 'OPEN' }, { to: 'list' }),
+              ],
               on: {
                 UP: {
                   actions: [send({ type: 'UP' }, { to: 'list' })],
