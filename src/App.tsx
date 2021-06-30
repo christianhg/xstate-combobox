@@ -22,6 +22,7 @@ const fruit: Fruit[] = [
   'Grape',
   'Raspberry',
 ].map((fruit) => ({ id: fruit.toLowerCase(), label: fruit }));
+
 const searchFruit = (items: Fruit[], query: string) => {
   return items.filter((item) =>
     item.label.toLowerCase().includes(query.toLowerCase())
@@ -32,10 +33,12 @@ function App() {
   return (
     <div className="App">
       <Combobox
+        comparator={(a, b) => a.id === b.id}
+        footer={"Can't find your fruit?"}
         items={fruit}
         itemToString={(item) => item.label}
-        comparator={(a, b) => a.id === b.id}
         onFooterSelected={() => {
+          // Redirect to another page
           console.log('footer selected')
         }}
         search={searchFruit}

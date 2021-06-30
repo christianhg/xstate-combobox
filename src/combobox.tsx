@@ -1,17 +1,23 @@
 import * as React from 'react';
-import { ComboboxItem, ComboboxItemComparator, ComboboxSearch } from './combobox-machine';
+import {
+  ComboboxItem,
+  ComboboxItemComparator,
+  ComboboxSearch,
+} from './combobox-machine';
 import { useCombobox } from './use-combobox';
 
 type Props<TItem extends ComboboxItem> = {
+  comparator: ComboboxItemComparator<TItem>;
+  footer: React.ReactNode;
   items: TItem[];
-  search: ComboboxSearch<TItem>;
   itemToString: (item: TItem) => string;
-  comparator: ComboboxItemComparator<TItem>
-  onFooterSelected: () => void
+  onFooterSelected: () => void;
+  search: ComboboxSearch<TItem>;
 };
 
 export const Combobox = <TItem extends ComboboxItem>({
   comparator,
+  footer,
   items,
   itemToString,
   onFooterSelected,
@@ -42,16 +48,16 @@ export const Combobox = <TItem extends ComboboxItem>({
         value={selection !== undefined ? itemToString(selection) : query}
       />
       {isOpen ? (
-        <div className="combobox-list">
-          <ul>
-            {list.map((item, index) => (
-              <li {...getItemProps(index)} key={index}>
-                {itemToString(item)}
-              </li>
-            ))}
-            <li {...getFooterProps()}>Can't find your journal?</li>
-          </ul>
-        </div>
+        <ul>
+          {list.map((item, index) => (
+            <li {...getItemProps(index)} key={index}>
+              {itemToString(item)}
+            </li>
+          ))}
+          <li className="combobox-footer" {...getFooterProps()}>
+            {footer}
+          </li>
+        </ul>
       ) : undefined}
     </>
   );

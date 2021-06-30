@@ -30,3 +30,7 @@ li {
   border: 1px solid lightgrey;
   cursor: pointer;
 }
+
+.combobox-footer {
+  font-style: italic;
+}
