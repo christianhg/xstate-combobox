@@ -89,8 +89,12 @@ export function useCombobox<TItem extends ComboboxItem>({
       state: current.value,
     },
     getInputProps: () => ({
-      onFocus: () => {
+      onFocus: (e) => {
         send('FOCUS');
+
+        if (e.currentTarget.value.length > 0) {
+          inputRef.current?.select();
+        }
       },
       onBlur: () => {
         send('BLUR');
