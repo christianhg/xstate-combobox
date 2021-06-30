@@ -48,10 +48,12 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
   items,
   search,
   comparator,
+  onFooterSelected,
 }: {
   items: TComboboxItem[];
   search: ComboboxSearch<TComboboxItem>;
   comparator: ComboboxItemComparator<TComboboxItem>;
+  onFooterSelected: () => void;
 }) {
   const listMachine = createListMachine<TComboboxItem>();
 
@@ -91,9 +93,7 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
               actions: ['setPointer'],
             },
             FOOTER_SELECTED: {
-              actions: () => {
-                console.log('footer selected');
-              },
+              actions: [onFooterSelected],
             },
           },
           initial: 'select',

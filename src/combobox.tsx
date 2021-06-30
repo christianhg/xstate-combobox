@@ -7,12 +7,14 @@ type Props<TItem extends ComboboxItem> = {
   search: ComboboxSearch<TItem>;
   itemToString: (item: TItem) => string;
   comparator: ComboboxItemComparator<TItem>
+  onFooterSelected: () => void
 };
 
 export const Combobox = <TItem extends ComboboxItem>({
   comparator,
   items,
   itemToString,
+  onFooterSelected,
   search,
 }: Props<TItem>) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -28,6 +30,7 @@ export const Combobox = <TItem extends ComboboxItem>({
     comparator,
     inputRef,
     items,
+    onFooterSelected,
     search,
   });
 

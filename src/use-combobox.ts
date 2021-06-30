@@ -33,18 +33,23 @@ type ComboboxReturnType<TItem> = {
 };
 
 export function useCombobox<TItem extends ComboboxItem>({
+  comparator,
   inputRef,
   items,
+  onFooterSelected,
   search,
-  comparator,
 }: {
+  comparator: ComboboxItemComparator<TItem>;
   inputRef: React.RefObject<HTMLInputElement>;
   items: TItem[];
+  onFooterSelected: () => void
   search: ComboboxSearch<TItem>;
-  comparator: ComboboxItemComparator<TItem>;
 }): ComboboxReturnType<TItem> {
   const [current, send] = useMachine(() =>
-    createComboboxMachine({ items, search, comparator })
+    createComboboxMachine({ items, search, comparator, onFooterSelected: () => {
+      inputRef.current?.blur();
+      onFooterSelected();
+    } })
   );
 
   React.useEffect(() => {

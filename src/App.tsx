@@ -36,6 +36,9 @@ function App() {
         items={fruit}
         itemToString={(item) => item.label}
         comparator={(a, b) => a.id === b.id}
+        onFooterSelected={() => {
+          console.log('footer selected')
+        }}
         search={searchFruit}
       />
     </div>
