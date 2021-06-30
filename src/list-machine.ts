@@ -12,7 +12,6 @@ type ListEvent =
   | { type: 'MOUSE_ENTER_FOOTER'}
   | { type: 'MOUSE_LEAVE_FOOTER'}
   | { type: 'OPEN' }
-  | { type: 'CLOSE' }
   | { type: 'SELECT' };
 
 export function createListMachine<TItem>() {
@@ -32,7 +31,6 @@ export function createListMachine<TItem>() {
         },
         opened: {
           on: {
-            CLOSE: { target: 'closed' },
             MOUSE_ENTER_ITEM: {
               actions: ['setPointer'],
               target: 'opened.browsingList',
