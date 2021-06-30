@@ -29,11 +29,8 @@ const searchFruit = (items: Fruit[], query: string) => {
 };
 
 /**
- * - Select input text on refocus
- * - Clear input text on blur if no selection
  * - Trigger pointer movement on mouse move
  * - Include footer in mouse movement
- * - DOWN when no results
  */
 
 function App() {

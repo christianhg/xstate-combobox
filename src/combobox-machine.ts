@@ -178,6 +178,23 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
             },
             noResults: {
               tags: ['open'],
+              invoke: {
+                id: 'list',
+                src: listMachine,
+                data: {
+                  items: [],
+                  pointer: undefined,
+                },
+              },
+              entry: [send({ type: 'OPEN' }, { to: 'list' })],
+              on: {
+                DOWN: {
+                  actions: [send({ type: 'DOWN' }, { to: 'list' })],
+                },
+                ENTER: {
+                  actions: [send({ type: 'SELECT' }, { to: 'list' })],
+                },
+              },
             },
             hasResults: {
               tags: ['open', 'showResults'],
@@ -218,7 +235,7 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
             : context
         ),
         clearQuery: assign({
-          query: (context) => ''
+          query: (context) => '',
         }),
         clearPointer: assign({
           pointer: (context) => ({ placement: 'none' }),
