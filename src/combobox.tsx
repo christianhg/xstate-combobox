@@ -49,8 +49,8 @@ export const Combobox = <TItem extends ComboboxItem>({
                 {itemToString(item)}
               </li>
             ))}
+            <li {...getFooterProps()}>Can't find your journal?</li>
           </ul>
-          <p {...getFooterProps()}>Can't find your journal?</p>
         </div>
       ) : undefined}
     </>

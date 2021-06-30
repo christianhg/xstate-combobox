@@ -13,7 +13,6 @@ code {
     monospace;
 }
 
-p[data-highlighted],
 li[data-highlighted] {
   font-weight: bold;
 }

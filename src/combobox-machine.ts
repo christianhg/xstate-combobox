@@ -32,8 +32,13 @@ export type ComboboxEvent<TComboboxItem> =
   | { type: 'BLUR' }
   | { type: 'UP' }
   | { type: 'DOWN' }
-  | { type: 'MOUSE_ENTER'; index: number }
-  | { type: 'MOUSE_LEAVE'; index: number }
+  | {
+      type: 'MOUSE_ENTER_ITEM';
+      index: number;
+    }
+  | { type: 'MOUSE_LEAVE_ITEM' }
+  | { type: 'MOUSE_ENTER_FOOTER'}
+  | { type: 'MOUSE_LEAVE_FOOTER'}
   | { type: 'ENTER' }
   | { type: 'QUERY_CHANGED'; query: string }
   | { type: 'ITEM_SELECTED'; item: TComboboxItem }
@@ -136,28 +141,18 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
                 ENTER: {
                   actions: [send({ type: 'SELECT' }, { to: 'list' })],
                 },
-                MOUSE_ENTER: {
-                  actions: [
-                    send(
-                      (context, event) => ({
-                        type: 'MOUSE_ENTER',
-                        index: event.index,
-                      }),
-                      { to: 'list' }
-                    ),
-                  ],
+                MOUSE_ENTER_ITEM: {
+                  actions: [send((context, event) => event, { to: 'list' })],
                 },
-                MOUSE_LEAVE: {
-                  actions: [
-                    send(
-                      (context, event) => ({
-                        type: 'MOUSE_LEAVE',
-                        index: event.index,
-                      }),
-                      { to: 'list' }
-                    ),
-                  ],
+                MOUSE_LEAVE_ITEM: {
+                  actions: [send({ type: 'MOUSE_LEAVE_ITEM' }, { to: 'list' })],
                 },
+                MOUSE_ENTER_FOOTER: {
+                  actions: [send({type: 'MOUSE_ENTER_FOOTER'}, { to: 'list'})]
+                },
+                MOUSE_LEAVE_FOOTER: {
+                  actions: [send({type: 'MOUSE_LEAVE_FOOTER'}, { to: 'list'})]
+                }
               },
             },
             searching: {

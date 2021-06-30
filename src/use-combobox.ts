@@ -27,6 +27,8 @@ type ComboboxReturnType<TItem> = {
   };
   getFooterProps: () => {
     'data-highlighted': string | undefined;
+    onMouseEnter: React.MouseEventHandler;
+    onMouseLeave: React.MouseEventHandler;
   };
   isOpen: boolean;
   list: TItem[];
@@ -114,15 +116,24 @@ export function useCombobox<TItem extends ComboboxItem>({
           ? ''
           : undefined,
       onMouseEnter: () => {
-        send({ type: 'MOUSE_ENTER', index });
+        send({
+          type: 'MOUSE_ENTER_ITEM',
+          index: index,
+        });
       },
       onMouseLeave: () => {
-        send({ type: 'MOUSE_LEAVE', index });
+        send({ type: 'MOUSE_LEAVE_ITEM' });
       },
     }),
     getFooterProps: () => ({
       'data-highlighted':
         current.context.pointer.placement === 'footer' ? '' : undefined,
+      onMouseEnter: () => {
+        send({ type: 'MOUSE_ENTER_FOOTER' });
+      },
+      onMouseLeave: () => {
+        send({ type: 'MOUSE_LEAVE_FOOTER' });
+      },
     }),
     isOpen: current.tags.has('open'),
     list: current.tags.has('showAll')
