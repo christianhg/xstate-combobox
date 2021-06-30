@@ -1,6 +1,5 @@
 import React from 'react';
 import { Combobox } from './combobox';
-import './App.css';
 
 type Fruit = {
   id: string;

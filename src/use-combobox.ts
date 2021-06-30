@@ -22,6 +22,8 @@ type ComboboxReturnType<TItem> = {
   };
   getItemProps: (index: number) => {
     'data-highlighted': string | undefined;
+    onMouseEnter: React.MouseEventHandler;
+    onMouseLeave: React.MouseEventHandler;
   };
   getFooterProps: () => {
     'data-highlighted': string | undefined;
@@ -42,14 +44,19 @@ export function useCombobox<TItem extends ComboboxItem>({
   comparator: ComboboxItemComparator<TItem>;
   inputRef: React.RefObject<HTMLInputElement>;
   items: TItem[];
-  onFooterSelected: () => void
+  onFooterSelected: () => void;
   search: ComboboxSearch<TItem>;
 }): ComboboxReturnType<TItem> {
   const [current, send] = useMachine(() =>
-    createComboboxMachine({ items, search, comparator, onFooterSelected: () => {
-      inputRef.current?.blur();
-      onFooterSelected();
-    } })
+    createComboboxMachine({
+      items,
+      search,
+      comparator,
+      onFooterSelected: () => {
+        inputRef.current?.blur();
+        onFooterSelected();
+      },
+    })
   );
 
   React.useEffect(() => {
@@ -102,6 +109,12 @@ export function useCombobox<TItem extends ComboboxItem>({
         current.context.pointer.index === index
           ? ''
           : undefined,
+      onMouseEnter: () => {
+        send({ type: 'MOUSE_ENTER', index });
+      },
+      onMouseLeave: () => {
+        send({ type: 'MOUSE_LEAVE', index });
+      },
     }),
     getFooterProps: () => ({
       'data-highlighted':

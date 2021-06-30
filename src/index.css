@@ -17,3 +17,17 @@ p[data-highlighted],
 li[data-highlighted] {
   font-weight: bold;
 }
+
+ul {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+}
+
+li {
+  list-style: none;
+  border: 1px solid lightgrey;
+  cursor: pointer;
+}

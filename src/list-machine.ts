@@ -7,6 +7,8 @@ type ListContext<TItem> = {
 type ListEvent =
   | { type: 'UP' }
   | { type: 'DOWN' }
+  | { type: 'MOUSE_ENTER'; index: number }
+  | { type: 'MOUSE_LEAVE'; index: number }
   | { type: 'OPEN' }
   | { type: 'CLOSE' }
   | { type: 'SELECT' };
@@ -29,12 +31,20 @@ export function createListMachine<TItem>() {
         opened: {
           on: {
             CLOSE: { target: 'closed' },
+            MOUSE_ENTER: {
+              actions: ['setPointer'],
+              target: 'opened.browsingList',
+            },
+            MOUSE_LEAVE: {
+              actions: ['clearPointer'],
+              target: 'opened.idle',
+            },
           },
           initial: 'idle',
           states: {
             idle: {
+              entry: ['sendListPointer'],
               always: [{ cond: 'hasPointer', target: 'browsingList' }],
-
               on: {
                 DOWN: [
                   {
@@ -111,6 +121,12 @@ export function createListMachine<TItem>() {
         }),
         pointAtLastItem: assign({
           pointer: (context) => context.items.length - 1,
+        }),
+        setPointer: assign((context, event) =>
+          event.type === 'MOUSE_ENTER' ? { pointer: event.index } : context
+        ),
+        clearPointer: assign({
+          pointer: (context) => undefined,
         }),
       },
       guards: {
