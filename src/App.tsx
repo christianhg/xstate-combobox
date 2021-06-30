@@ -28,11 +28,6 @@ const searchFruit = (items: Fruit[], query: string) => {
   );
 };
 
-/**
- * - Trigger pointer movement on mouse move
- * - Include footer in mouse movement
- */
-
 function App() {
   return (
     <div className="App">
