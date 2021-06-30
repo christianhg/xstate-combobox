@@ -1,14 +1,12 @@
 import { useMachine } from '@xstate/react';
 import * as React from 'react';
 import { StateValue } from 'xstate';
-import { ComboboxContext, createComboboxMachine } from './combobox-machine';
+import { ComboboxContext, ComboboxItem, ComboboxSearch, createComboboxMachine } from './combobox-machine';
 
-type Item = string;
-
-type ComboboxReturnType = {
+type ComboboxReturnType<TItem> = {
   debug: {
     state: StateValue;
-    context: ComboboxContext;
+    context: ComboboxContext<TItem>;
   };
   getInputProps: () => {
     onFocus: React.FocusEventHandler<HTMLInputElement>;
@@ -23,20 +21,20 @@ type ComboboxReturnType = {
     'data-highlighted': string | undefined;
   };
   isOpen: boolean;
-  list: Item[];
+  list: TItem[];
   query: string;
-  selection?: Item;
+  selection?: TItem;
 };
 
-export function useCombobox({
+export function useCombobox<TItem extends ComboboxItem>({
   inputRef,
   items,
   search,
 }: {
   inputRef: React.RefObject<HTMLInputElement>;
-  items: Item[];
-  search: (items: Item[], query: string) => Item[];
-}): ComboboxReturnType {
+  items: TItem[];
+  search: ComboboxSearch<TItem>;
+}): ComboboxReturnType<TItem> {
   const [current, send] = useMachine(() =>
     createComboboxMachine({ items, search })
   );

@@ -1,33 +1,20 @@
 import * as React from 'react';
+import { ComboboxItem } from './combobox-machine';
 import { useCombobox } from './use-combobox';
 
-type Item = string;
+type Props<TItem> = {
+  items: TItem[];
+  search: (items: TItem[], query: string) => TItem[];
+  itemToString: (item: TItem) => string;
+};
 
-export const Combobox = () => {
+export const Combobox = <TItem extends ComboboxItem>({
+  items,
+  itemToString,
+  search,
+}: Props<TItem>) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const items: Item[] = [
-    'apple',
-    'banana',
-    'coconut',
-    'orange',
-    'watermelon',
-    'pear',
-    'strawberry',
-    'peach',
-    'mango',
-    'blueberry',
-    'kiwi',
-    'lime',
-    'grape',
-    'raspberry',
-  ];
-  const search = (items: Item[], query: string) => {
-    return items.filter((item) =>
-      item.toLowerCase().includes(query.toLowerCase())
-    );
-  };
   const {
-    debug,
     getInputProps,
     getItemProps,
     getFooterProps,
@@ -43,18 +30,17 @@ export const Combobox = () => {
 
   return (
     <>
-      <input type="text" {...getInputProps()} value={selection ?? query} />
-      <pre>Selection: {selection}</pre>
-      <pre>{JSON.stringify(debug.state)}</pre>
-      <pre>{JSON.stringify(debug.context.items)}</pre>
-      <pre>{JSON.stringify(debug.context.query)}</pre>
-      <pre>{JSON.stringify(debug.context.results)}</pre>
+      <input
+        type="text"
+        {...getInputProps()}
+        value={selection !== undefined ? itemToString(selection) : query}
+      />
       {isOpen ? (
         <div className="combobox-list">
           <ul>
             {list.map((item, index) => (
               <li {...getItemProps(index)} key={index}>
-                {item}
+                {itemToString(item)}
               </li>
             ))}
           </ul>

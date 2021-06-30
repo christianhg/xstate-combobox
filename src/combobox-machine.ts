@@ -1,44 +1,57 @@
-import { assign, createMachine, send } from "xstate";
-import { listMachine } from "./list-machine";
+import { assign, createMachine, send } from 'xstate';
+import { createListMachine } from './list-machine';
 
-type Item = string;
+export type ComboboxItem = {
+  id: string;
+  label: string;
+};
 
-export type ComboboxContext = {
-  items: Item[];
+export type ComboboxSearch<TComboboxItem extends ComboboxItem> = (
+  items: TComboboxItem[],
+  query: string
+) => TComboboxItem[];
+
+export type ComboboxContext<TComboboxItem> = {
+  items: TComboboxItem[];
   query: string;
-  results: Item[];
-  selection?: Item;
+  results: TComboboxItem[];
+  selection?: TComboboxItem;
   pointer:
     | { placement: 'none' }
     | { placement: 'list'; index: number }
     | { placement: 'footer' };
 };
 
-export type ComboboxEvent =
-| { type: 'FOCUS' }
-| { type: 'BLUR' }
-| { type: 'UP' }
-| { type: 'DOWN' }
-| { type: 'ENTER' }
-| { type: 'QUERY_CHANGED'; query: string }
-| { type: 'ITEM_SELECTED'; item: Item }
-| {
-    type: 'POINTER_MOVED';
-    pointer:
-      | { placement: 'none' }
-      | { placement: 'list'; index: number }
-      | { placement: 'footer' };
-  }
-| { type: 'FOOTER_SELECTED' };
+export type ComboboxEvent<TComboboxItem> =
+  | { type: 'FOCUS' }
+  | { type: 'BLUR' }
+  | { type: 'UP' }
+  | { type: 'DOWN' }
+  | { type: 'ENTER' }
+  | { type: 'QUERY_CHANGED'; query: string }
+  | { type: 'ITEM_SELECTED'; item: TComboboxItem }
+  | {
+      type: 'POINTER_MOVED';
+      pointer:
+        | { placement: 'none' }
+        | { placement: 'list'; index: number }
+        | { placement: 'footer' };
+    }
+  | { type: 'FOOTER_SELECTED' };
 
-export function createComboboxMachine({
+export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
   items,
   search,
 }: {
-  items: Item[];
-  search: (items: Item[], query: string) => Item[];
+  items: TComboboxItem[];
+  search: ComboboxSearch<TComboboxItem>;
 }) {
-  return createMachine<ComboboxContext, ComboboxEvent>(
+  const listMachine = createListMachine<TComboboxItem>()
+
+  return createMachine<
+    ComboboxContext<TComboboxItem>,
+    ComboboxEvent<TComboboxItem>
+  >(
     {
       id: 'search',
       initial: 'blurred',
@@ -98,8 +111,9 @@ export function createComboboxMachine({
                 id: 'list',
                 src: listMachine,
                 data: {
-                  items: (context: ComboboxContext) => context.items,
-                  pointer: (context: ComboboxContext) =>
+                  items: (context: ComboboxContext<TComboboxItem>) =>
+                    context.items,
+                  pointer: (context: ComboboxContext<TComboboxItem>) =>
                     context.selection
                       ? findIndex(
                           context.items,
@@ -150,7 +164,8 @@ export function createComboboxMachine({
                 id: 'list',
                 src: listMachine,
                 data: {
-                  items: (context: ComboboxContext) => context.results,
+                  items: (context: ComboboxContext<TComboboxItem>) =>
+                    context.results,
                   pointer: undefined,
                 },
               },
@@ -207,7 +222,6 @@ export function createComboboxMachine({
     }
   );
 }
-
 
 function findIndex<A>(xs: A[], x: A, comparator: (x: A, y: A) => boolean) {
   const index = xs.findIndex((y) => comparator(x, y));
