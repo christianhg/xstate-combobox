@@ -75,6 +75,7 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
       },
       states: {
         blurred: {
+          entry: ['clearQuery'],
           on: {
             FOCUS: { target: 'focused' },
           },
@@ -216,6 +217,9 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
               }
             : context
         ),
+        clearQuery: assign({
+          query: (context) => ''
+        }),
         clearPointer: assign({
           pointer: (context) => ({ placement: 'none' }),
         }),
