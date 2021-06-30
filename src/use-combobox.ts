@@ -24,6 +24,7 @@ type ComboboxReturnType<TItem> = {
     'data-highlighted': string | undefined;
     onMouseEnter: React.MouseEventHandler;
     onMouseLeave: React.MouseEventHandler;
+    onMouseMove: React.MouseEventHandler;
     onMouseDown: React.MouseEventHandler;
     onClick: React.MouseEventHandler;
   };
@@ -32,6 +33,7 @@ type ComboboxReturnType<TItem> = {
     onMouseEnter: React.MouseEventHandler;
     onMouseLeave: React.MouseEventHandler;
     onMouseDown: React.MouseEventHandler;
+    onMouseMove: React.MouseEventHandler;
     onClick: React.MouseEventHandler;
   };
   isOpen: boolean;
@@ -120,13 +122,13 @@ export function useCombobox<TItem extends ComboboxItem>({
           ? ''
           : undefined,
       onMouseEnter: () => {
-        send({
-          type: 'MOUSE_ENTER_ITEM',
-          index: index,
-        });
+        send({ type: 'MOUSE_ENTER_ITEM', index });
       },
       onMouseLeave: () => {
         send({ type: 'MOUSE_LEAVE_ITEM' });
+      },
+      onMouseMove: () => {
+        send({ type: 'MOUSE_ENTER_ITEM', index });
       },
       onMouseDown: (e) => {
         // To prevent the input from getting blurred before
@@ -148,6 +150,9 @@ export function useCombobox<TItem extends ComboboxItem>({
       onMouseDown: (e) => {
         // To prevent the input from getting blurred before
         e.preventDefault();
+      },
+      onMouseMove: () => {
+        send('MOUSE_ENTER_FOOTER');
       },
       onClick: () => {
         send('CLICK');
