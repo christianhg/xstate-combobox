@@ -99,11 +99,6 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
           initial: 'select',
           states: {
             idle: {
-              entry: [
-                () => {
-                  console.log('idle search');
-                },
-              ],
               on: {
                 UP: {
                   target: 'select',
@@ -127,12 +122,7 @@ export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
                       : undefined,
                 },
               },
-              entry: [
-                () => {
-                  console.log('select mode');
-                },
-                send({ type: 'OPEN' }, { to: 'list' }),
-              ],
+              entry: [send({ type: 'OPEN' }, { to: 'list' })],
               on: {
                 UP: {
                   actions: [send({ type: 'UP' }, { to: 'list' })],

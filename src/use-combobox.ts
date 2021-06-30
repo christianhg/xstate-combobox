@@ -71,8 +71,6 @@ export function useCombobox<TItem extends ComboboxItem>({
     };
   }, [send, inputRef]);
 
-  console.log(current);
-
   return {
     debug: {
       context: current.context,

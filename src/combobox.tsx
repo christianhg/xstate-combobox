@@ -17,7 +17,6 @@ export const Combobox = <TItem extends ComboboxItem>({
 }: Props<TItem>) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {
-    debug,
     getInputProps,
     getItemProps,
     getFooterProps,
@@ -31,8 +30,6 @@ export const Combobox = <TItem extends ComboboxItem>({
     items,
     search,
   });
-
-  console.log(debug);
 
   return (
     <>

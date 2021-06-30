@@ -22,21 +22,11 @@ export function createListMachine<TItem>() {
       initial: 'closed',
       states: {
         closed: {
-          entry: [
-            (context) => {
-              console.log('closed', context);
-            },
-          ],
           on: {
             OPEN: { target: 'opened' },
           },
         },
         opened: {
-          entry: [
-            (context) => {
-              console.log('opened', context);
-            },
-          ],
           on: {
             CLOSE: { target: 'closed' },
           },
@@ -44,11 +34,7 @@ export function createListMachine<TItem>() {
           states: {
             idle: {
               always: [{ cond: 'hasPointer', target: 'browsingList' }],
-              entry: [
-                (context) => {
-                  console.log('idle', context);
-                },
-              ],
+
               on: {
                 DOWN: [
                   {
@@ -61,12 +47,7 @@ export function createListMachine<TItem>() {
               },
             },
             browsingList: {
-              entry: [
-                'sendListPointer',
-                () => {
-                  console.log('browsingList');
-                },
-              ],
+              entry: ['sendListPointer'],
               on: {
                 UP: [
                   { cond: 'firstItem', target: 'browsingList', internal: true },
@@ -82,12 +63,7 @@ export function createListMachine<TItem>() {
               },
             },
             focusingFooter: {
-              entry: [
-                'sendFooterPointer',
-                () => {
-                  console.log('focusingFooter');
-                },
-              ],
+              entry: ['sendFooterPointer'],
               on: {
                 UP: {
                   cond: 'hasItems',
@@ -140,14 +116,8 @@ export function createListMachine<TItem>() {
       guards: {
         hasPointer: (context) => context.pointer !== undefined,
         hasItems: (context) => context.items.length > 0,
-        firstItem: (context) => {
-          console.log('first item?', context);
-          return context.pointer === 0;
-        },
-        lastItem: (context) => {
-          console.log('last item?', context);
-          return context.items.length - 1 === context.pointer;
-        },
+        firstItem: (context) => context.pointer === 0,
+        lastItem: (context) => context.items.length - 1 === context.pointer,
       },
     }
   );
