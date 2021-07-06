@@ -5,17 +5,12 @@ import {
   ListMouseEvent,
 } from './list-machine';
 
-export type ComboboxItem = {
-  id: string;
-  label: string;
-};
-
-export type ComboboxSearch<TComboboxItem extends ComboboxItem> = (
+export type ComboboxSearch<TComboboxItem> = (
   items: TComboboxItem[],
   query: string
 ) => TComboboxItem[];
 
-export type ComboboxItemComparator<TComboboxItem extends ComboboxItem> = (
+export type ComboboxItemComparator<TComboboxItem> = (
   a: TComboboxItem,
   b: TComboboxItem
 ) => boolean;
@@ -49,7 +44,7 @@ export type ComboboxEvent<TComboboxItem> =
     }
   | { type: 'FOOTER_SELECTED' };
 
-export function createComboboxMachine<TComboboxItem extends ComboboxItem>({
+export function createComboboxMachine<TComboboxItem>({
   items,
   search,
   comparator,

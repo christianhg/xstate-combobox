@@ -3,7 +3,6 @@ import * as React from 'react';
 import { StateValue } from 'xstate';
 import {
   ComboboxContext,
-  ComboboxItem,
   ComboboxItemComparator,
   ComboboxSearch,
   createComboboxMachine,
@@ -42,7 +41,7 @@ type ComboboxReturnType<TItem> = {
   selection?: TItem;
 };
 
-export function useCombobox<TItem extends ComboboxItem>({
+export function useCombobox<TItem>({
   comparator,
   inputRef,
   items,

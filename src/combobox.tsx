@@ -1,10 +1,14 @@
 import * as React from 'react';
 import {
-  ComboboxItem,
   ComboboxItemComparator,
   ComboboxSearch,
 } from './use-combobox/combobox-machine';
 import { useCombobox } from './use-combobox/use-combobox';
+
+type ComboboxItem = {
+  label: string;
+  id: string;
+};
 
 type Props<TItem extends ComboboxItem> = {
   comparator: ComboboxItemComparator<TItem>;
