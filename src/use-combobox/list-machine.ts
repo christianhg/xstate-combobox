@@ -4,6 +4,7 @@ type ListContext<TItem> = {
   items: TItem[];
   pointer?: number;
 };
+
 export type ListKeyboardEvent = { type: 'UP' } | { type: 'DOWN' };
 export type ListMouseEvent =
   | { type: 'MOUSE_ENTER_ITEM'; index: number }
