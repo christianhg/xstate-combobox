@@ -3,8 +3,8 @@ import {
   ComboboxItem,
   ComboboxItemComparator,
   ComboboxSearch,
-} from './combobox-machine';
-import { useCombobox } from './use-combobox';
+} from './use-combobox/combobox-machine';
+import { useCombobox } from './use-combobox/use-combobox';
 
 type Props<TItem extends ComboboxItem> = {
   comparator: ComboboxItemComparator<TItem>;
